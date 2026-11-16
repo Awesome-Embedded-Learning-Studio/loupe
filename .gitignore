@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+# 引擎产物与镜像资产按网址分发,不进仓
+*.wasm
+public/engine.wasm
+demo/public/

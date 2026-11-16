@@ -1,0 +1,19 @@
+{
+  "name": "@aels/wasm-runtime-host",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "TypeScript wrapper for the micro-forge wasm engine: loading with ABI checks, machine lifetime, run-loop stepping, and the serial console stream.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./worker": "./src/worker/engine-worker.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

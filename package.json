@@ -1,0 +1,16 @@
+{
+  "name": "loupe",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "loupe:把 micro-forge 编出的 wasm 引擎伺候到浏览器里的网页壳仓。",
+  "scripts": {
+    "dev": "pnpm --filter @aels/loupe-demo dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
