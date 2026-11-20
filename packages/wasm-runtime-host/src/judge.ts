@@ -75,7 +75,7 @@ export async function judgeSerial(
 ): Promise<CaseResult> {
   const budget = options.budget ?? 2_000_000
   const gap = options.stepGapMs ?? 10
-  const sleep = options.sleep ?? (ms => new Promise<void>(r => setTimeout(r, ms)))
+  const sleep = options.sleep ?? ((ms) => new Promise<void>((r) => setTimeout(r, ms)))
   const results: StepResult[] = []
   let printed = machine.readConsole(0).printed
 
@@ -113,7 +113,7 @@ export async function judgeSerial(
     })
   }
   return {
-    ok: results.every(r => r.ok),
+    ok: results.every((r) => r.ok),
     steps: results,
     icount: machine.icount,
   }

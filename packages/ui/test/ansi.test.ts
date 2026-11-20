@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AnsiStreamParser, resetStyle } from './ansi'
+import { AnsiStreamParser, resetStyle } from '../src/ansi'
 
 describe('AnsiStreamParser', () => {
   it('passes plain text through untouched', () => {
@@ -25,7 +25,10 @@ describe('AnsiStreamParser', () => {
     expect(segments[0].style).toMatchObject({ fg: 'p4' })
     expect(segments[0].text).toBe('blue')
     expect(parser.feed('!')).toEqual([
-      { text: '!', style: { fg: 'p4', bg: null, bold: true, faint: false, italic: false, underline: false } },
+      {
+        text: '!',
+        style: { fg: 'p4', bg: null, bold: true, faint: false, italic: false, underline: false },
+      },
     ])
   })
 
@@ -33,7 +36,10 @@ describe('AnsiStreamParser', () => {
     const parser = new AnsiStreamParser()
     parser.feed('\x1b[32m')
     expect(parser.feed('more')).toEqual([
-      { text: 'more', style: { fg: 'p2', bg: null, bold: false, faint: false, italic: false, underline: false } },
+      {
+        text: 'more',
+        style: { fg: 'p2', bg: null, bold: false, faint: false, italic: false, underline: false },
+      },
     ])
   })
 
@@ -70,7 +76,7 @@ describe('AnsiStreamParser', () => {
     expect(parser.feed('\x1b[?')).toEqual([]) // incomplete, stays buffered
     expect(parser.feed('25h')).toEqual([]) // cursor-visibility CSI, swallowed
     const segments = parser.feed('y')
-    expect(segments.map(s => s.text).join('')).toBe('y')
+    expect(segments.map((s) => s.text).join('')).toBe('y')
   })
 
   it('starts from the given initial style', () => {

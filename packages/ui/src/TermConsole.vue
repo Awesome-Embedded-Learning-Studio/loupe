@@ -40,15 +40,27 @@ let parser = new AnsiStreamParser()
  * scoped CSS classes would never match them.
  */
 const TERM_PALETTE = [
-  '#3b4252', '#bf616a', '#a3be8c', '#ebcb8b',
-  '#81a1c1', '#b48ead', '#88c0d0', '#e5e9f0',
-  '#4c566a', '#d08770', '#b5d6a7', '#f2df9e',
-  '#a7c4e0', '#cba8cf', '#a5d6e5', '#ffffff',
+  '#3b4252',
+  '#bf616a',
+  '#a3be8c',
+  '#ebcb8b',
+  '#81a1c1',
+  '#b48ead',
+  '#88c0d0',
+  '#e5e9f0',
+  '#4c566a',
+  '#d08770',
+  '#b5d6a7',
+  '#f2df9e',
+  '#a7c4e0',
+  '#cba8cf',
+  '#a5d6e5',
+  '#ffffff',
 ] as const
 
 /** Builds DOM nodes for styled segments (plain text stays a text node). */
 const segmentNodes = (segments: TermSegment[]): Node[] =>
-  segments.map(segment => {
+  segments.map((segment) => {
     if (segment.style === null) return document.createTextNode(segment.text)
     const span = document.createElement('span')
     span.textContent = segment.text
@@ -64,9 +76,7 @@ const segmentNodes = (segments: TermSegment[]): Node[] =>
 
 /** Maps a parser color ('pN' palette key or any CSS color) to a CSS value. */
 const paletteColor = (color: string): string =>
-  color.startsWith('p')
-    ? TERM_PALETTE[Number(color.slice(1))] ?? 'inherit'
-    : color
+  color.startsWith('p') ? (TERM_PALETTE[Number(color.slice(1))] ?? 'inherit') : color
 
 /** Appends parsed segments to the DOM and keeps the viewport pinned. */
 const appendSegments = (segments: TermSegment[]): void => {

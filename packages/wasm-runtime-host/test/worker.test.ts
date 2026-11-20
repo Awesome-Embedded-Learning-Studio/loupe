@@ -7,10 +7,7 @@ import type { EngineEvent, EngineRequest } from '../src/worker/protocol'
 import { SNAPSHOT_ENGINE_NAME } from '../src/snapshot'
 import { DISK_PATH, ENGINE_PATH, KERNEL_PATH } from './assets'
 
-
-
-const sleep = (ms: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, ms))
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 /** Poll until the condition holds; throws with the evidence on timeout. */
 async function until(
@@ -33,7 +30,7 @@ function makeClient(
   handlers: EngineClientHandlers,
 ) {
   let deliver: ((event: EngineEvent) => void) | null = null
-  const logic = new EngineWorkerLogic(event => {
+  const logic = new EngineWorkerLogic((event) => {
     deliver?.(event)
   }, options)
   const port = {
@@ -41,7 +38,7 @@ function makeClient(
       void logic.handle(data as EngineRequest)
     },
     addEventListener: (_type: 'message', listener: (event: MessageEvent) => void) => {
-      deliver = event => listener(new MessageEvent('message', { data: event }))
+      deliver = (event) => listener(new MessageEvent('message', { data: event }))
     },
   }
   return { client: new EngineClient(port, handlers) }
@@ -59,10 +56,10 @@ describe('engine worker protocol (skipped without a local engine.wasm)', () => {
         {
           fetchImpl: (async () =>
             new Response(engineBytes.buffer.slice(0) as ArrayBuffer)) as unknown as typeof fetch,
-          schedule: fn => queueMicrotask(fn),
+          schedule: (fn) => queueMicrotask(fn),
         },
         {
-          onFeed: feed => {
+          onFeed: (feed) => {
             text += feed.text
             if (feed.stopped !== null) stopped = feed.stopped.kind
           },
@@ -98,7 +95,11 @@ describe('engine worker protocol (skipped without a local engine.wasm)', () => {
       expect(text).toContain('Cinux up')
 
       await client.pause()
-      await until(() => paused, 5_000, () => 'no paused notification')
+      await until(
+        () => paused,
+        5_000,
+        () => 'no paused notification',
+      )
 
       paused = false
       await client.inject('echo loupe-worker-ok', true)
@@ -120,22 +121,26 @@ describe('engine worker protocol (skipped without a local engine.wasm)', () => {
     client.terminate()
   })
 
-  it.skipIf(!ENGINE_PATH)('saves and restores over the worker protocol', async () => {
-    const engineBytes = await readFile(ENGINE_PATH!)
-    const { client } = makeClient(
-      {
-        fetchImpl: (async () =>
-          new Response(engineBytes.buffer.slice(0) as ArrayBuffer)) as unknown as typeof fetch,
-        schedule: fn => queueMicrotask(fn),
-      },
-      {},
-    )
-    await client.load('https://example/engine.wasm')
-    // An unbooted machine still has full state to save (RAM + CPU defaults).
-    const saved = await client.save()
-    expect(saved.header.engine).toBe(SNAPSHOT_ENGINE_NAME)
-    expect(saved.bytes.length).toBeGreaterThan(0)
-    await client.restore(saved.bytes)
-    client.terminate()
-  }, 120_000)
+  it.skipIf(!ENGINE_PATH)(
+    'saves and restores over the worker protocol',
+    async () => {
+      const engineBytes = await readFile(ENGINE_PATH!)
+      const { client } = makeClient(
+        {
+          fetchImpl: (async () =>
+            new Response(engineBytes.buffer.slice(0) as ArrayBuffer)) as unknown as typeof fetch,
+          schedule: (fn) => queueMicrotask(fn),
+        },
+        {},
+      )
+      await client.load('https://example/engine.wasm')
+      // An unbooted machine still has full state to save (RAM + CPU defaults).
+      const saved = await client.save()
+      expect(saved.header.engine).toBe(SNAPSHOT_ENGINE_NAME)
+      expect(saved.bytes.length).toBeGreaterThan(0)
+      await client.restore(saved.bytes)
+      client.terminate()
+    },
+    120_000,
+  )
 })

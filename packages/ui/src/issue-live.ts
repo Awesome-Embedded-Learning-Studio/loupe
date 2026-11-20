@@ -71,8 +71,28 @@ function parentKeyOf(url: unknown): string | null {
   return match ? issueKey(match[1], match[2]) : null
 }
 
-function normalize(raw: Record<string, any>, repoFull: string): IssueRecord {
-  const summary = raw.sub_issues_summary ?? {}
+/** The slice of a GitHub search-issues item that normalize() reads. */
+interface RawIssue {
+  number: number
+  title?: unknown
+  html_url?: string
+  parent_issue_url?: unknown
+  user?: { login?: string | null; avatar_url?: string | null } | null
+  created_at?: string
+  updated_at?: string
+  labels?: (string | { name?: unknown })[]
+  comments?: number
+  sub_issues_summary?: { total?: number; completed?: number }
+}
+
+/** The slice of the search response that fetchRepoIssues() reads. */
+interface SearchResponse {
+  total_count?: number
+  items?: RawIssue[]
+}
+
+function normalize(raw: RawIssue, repoFull: string): IssueRecord {
+  const summary: { total?: number; completed?: number } = raw.sub_issues_summary ?? {}
   return {
     key: issueKey(repoFull, raw.number),
     number: raw.number,
@@ -82,7 +102,11 @@ function normalize(raw: Record<string, any>, repoFull: string): IssueRecord {
     avatarUrl: raw.user?.avatar_url ?? null,
     createdAt: raw.created_at ?? '',
     updatedAt: raw.updated_at ?? '',
-    labels: (raw.labels ?? []).map((l: any) => (typeof l === 'string' ? l : l.name)),
+    labels: (raw.labels ?? []).flatMap((label) => {
+      if (typeof label === 'string') return [label]
+      if (typeof label.name === 'string') return [label.name]
+      return []
+    }),
     url: raw.html_url ?? `https://github.com/${repoFull}/issues/${raw.number}`,
     childTotal: summary.total ?? 0,
     completedChildren: summary.completed ?? 0,
@@ -98,13 +122,13 @@ export async function fetchRepoIssues(repoFull: string): Promise<IssueRecord[]> 
   const q = encodeURIComponent(`repo:${scope} is:issue is:open`)
   for (let page = 1; page <= 10; page++) {
     const res = await ghFetch(`${API}/search/issues?q=${q}&per_page=100&page=${page}`)
-    const data = await res.json()
-    const items: Record<string, any>[] = data.items ?? []
+    const data = (await res.json()) as SearchResponse
+    const items: RawIssue[] = data.items ?? []
     for (const item of items) {
       const issue = normalize(item, scope)
       out.set(issue.key, issue)
     }
-    if (items.length < 100 || out.size >= data.total_count) break
+    if (items.length < 100 || out.size >= (data.total_count ?? Infinity)) break
   }
   return [...out.values()].sort(
     (a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.key.localeCompare(b.key),

@@ -16,12 +16,15 @@ import type { IssueRecord } from './issue-live'
  */
 defineOptions({ name: 'IssueBoard' })
 
-const props = withDefaults(defineProps<{
-  /** Repository to watch, as `owner/name`. */
-  repo: string
-  /** English copy instead of Chinese. */
-  en?: boolean
-}>(), { en: false })
+const props = withDefaults(
+  defineProps<{
+    /** Repository to watch, as `owner/name`. */
+    repo: string
+    /** English copy instead of Chinese. */
+    en?: boolean
+  }>(),
+  { en: false },
+)
 
 const REPO_RE = /^[\w.-]+\/[\w.-]+$/
 
@@ -49,26 +52,27 @@ const cards = computed(() => {
 })
 
 const syncLabel = computed(() => {
-  const time = new Date(fetchedAt.value).toLocaleTimeString(
-    props.en ? 'en-US' : 'zh-CN',
-    { hour: '2-digit', minute: '2-digit' },
-  )
+  const time = new Date(fetchedAt.value).toLocaleTimeString(props.en ? 'en-US' : 'zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
   if (fromCache.value) return props.en ? `Cached from ${time}` : `${time} 的缓存`
   return props.en ? `Synced at ${time}` : `${time} 已同步`
 })
 
 function describeError(error: unknown): string {
-  if (isRateLimited(error)) return props.en ? 'GitHub API quota exhausted.' : 'GitHub 接口额度用完了。'
+  if (isRateLimited(error))
+    return props.en ? 'GitHub API quota exhausted.' : 'GitHub 接口额度用完了。'
   if (error instanceof GitHubError) return `GitHub HTTP ${error.status}`
   return props.en ? 'Could not load issues from GitHub.' : '没能从 GitHub 取到 Issue。'
 }
 
 function resetText(ms: number | null): string {
   if (!ms) return ''
-  const time = new Date(ms).toLocaleTimeString(
-    props.en ? 'en-US' : 'zh-CN',
-    { hour: '2-digit', minute: '2-digit' },
-  )
+  const time = new Date(ms).toLocaleTimeString(props.en ? 'en-US' : 'zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
   return props.en ? `Resets around ${time}.` : `大约 ${time} 恢复。`
 }
 
@@ -142,7 +146,10 @@ async function load(force = false): Promise<void> {
   }
 }
 
-watch(() => props.repo, () => void load(true))
+watch(
+  () => props.repo,
+  () => void load(true),
+)
 onMounted(() => void load())
 </script>
 
@@ -154,7 +161,12 @@ onMounted(() => void load())
     <div v-else-if="state === 'error'" class="board-notice">
       <p role="alert">{{ errMsg }} {{ resetText(resetAt) }}</p>
       <button class="control" type="button" @click="load(true)">{{ en ? 'Retry' : '重试' }}</button>
-      <a class="github-link" :href="`https://github.com/${repo}/issues`" target="_blank" rel="noopener">
+      <a
+        class="github-link"
+        :href="`https://github.com/${repo}/issues`"
+        target="_blank"
+        rel="noopener"
+      >
         {{ en ? 'Browse on GitHub' : '去 GitHub 看' }} ↗
       </a>
     </div>
@@ -163,7 +175,9 @@ onMounted(() => void load())
       <section class="board-panel" :aria-label="en ? 'Open issues' : '开放 Issue 看板'">
         <header class="board-head">
           <div class="scope">
-            <div class="nav-caption">{{ en ? 'Issue board · current scope' : 'Issue 看板 · 当前范围' }}</div>
+            <div class="nav-caption">
+              {{ en ? 'Issue board · current scope' : 'Issue 看板 · 当前范围' }}
+            </div>
             <h2 class="scope-title">{{ repo }}</h2>
           </div>
           <div class="head-tools">
@@ -174,7 +188,9 @@ onMounted(() => void load())
           </div>
         </header>
         <div class="list-bar">
-          <span aria-live="polite">{{ cards.length }} {{ en ? 'issue cards' : '张 Issue 卡片' }}</span>
+          <span aria-live="polite"
+            >{{ cards.length }} {{ en ? 'issue cards' : '张 Issue 卡片' }}</span
+          >
           <span>{{ en ? 'Recently updated first' : '最近更新优先' }}</span>
         </div>
         <div class="board-results">
@@ -186,10 +202,19 @@ onMounted(() => void load())
               <article class="issue-card">
                 <div class="card-top">
                   <div class="who">
-                    <img v-if="issue.avatarUrl && !avatarFailed.has(issue.key)" class="avatar" :src="issue.avatarUrl"
-                      alt="" width="25" height="25" loading="lazy"
-                      @error="avatarFailed.add(issue.key)" />
-                    <span v-else class="avatar initials" aria-hidden="true">{{ initialsOf(issue.author) }}</span>
+                    <img
+                      v-if="issue.avatarUrl && !avatarFailed.has(issue.key)"
+                      class="avatar"
+                      :src="issue.avatarUrl"
+                      alt=""
+                      width="25"
+                      height="25"
+                      loading="lazy"
+                      @error="avatarFailed.add(issue.key)"
+                    />
+                    <span v-else class="avatar initials" aria-hidden="true">{{
+                      initialsOf(issue.author)
+                    }}</span>
                     <div class="byline">
                       <span class="author" :title="issue.author ?? undefined">
                         {{ issue.author ?? (en ? 'Unknown author' : '未知作者') }}
@@ -197,21 +222,41 @@ onMounted(() => void load())
                       <span class="ref mono">#{{ issue.number }}</span>
                     </div>
                   </div>
-                  <span v-if="issue.labels.length" class="label" :class="`label-${labelKind(issue.labels[0])}`">
-                    {{ issue.labels[0] }}<template v-if="issue.labels.length > 1"> +{{ issue.labels.length - 1 }}</template>
+                  <span
+                    v-if="issue.labels.length"
+                    class="label"
+                    :class="`label-${labelKind(issue.labels[0])}`"
+                  >
+                    {{ issue.labels[0]
+                    }}<template v-if="issue.labels.length > 1">
+                      +{{ issue.labels.length - 1 }}</template
+                    >
                   </span>
                 </div>
                 <h3 class="issue-title">
-                  <a :href="issue.url" target="_blank" rel="noopener"
-                    :title="en ? 'Open on GitHub' : '在 GitHub 打开'">{{ issue.title }}</a>
+                  <a
+                    :href="issue.url"
+                    target="_blank"
+                    rel="noopener"
+                    :title="en ? 'Open on GitHub' : '在 GitHub 打开'"
+                    >{{ issue.title }}</a
+                  >
                 </h3>
                 <div class="card-foot">
-                  <time :datetime="issue.updatedAt">{{ en ? 'Updated' : '更新' }} {{ displayDate(issue.updatedAt, nowMs) }}</time>
+                  <time :datetime="issue.updatedAt"
+                    >{{ en ? 'Updated' : '更新' }} {{ displayDate(issue.updatedAt, nowMs) }}</time
+                  >
                   <span v-if="issue.childTotal > 0" class="meter">
                     <progress :value="doneOf(issue)" :max="issue.childTotal" />
-                    <span>{{ en ? `${doneOf(issue)}/${issue.childTotal} sub-issues` : `子任务 ${doneOf(issue)}/${issue.childTotal}` }}</span>
+                    <span>{{
+                      en
+                        ? `${doneOf(issue)}/${issue.childTotal} sub-issues`
+                        : `子任务 ${doneOf(issue)}/${issue.childTotal}`
+                    }}</span>
                   </span>
-                  <span v-if="issue.comments">{{ issue.comments }} {{ en ? 'comments' : '条评论' }}</span>
+                  <span v-if="issue.comments"
+                    >{{ issue.comments }} {{ en ? 'comments' : '条评论' }}</span
+                  >
                 </div>
               </article>
             </li>
@@ -219,7 +264,12 @@ onMounted(() => void load())
         </div>
       </section>
       <p class="board-foot">
-        {{ syncLabel }} · {{ en ? 'Open sub-issues fold into their parent card\'s meter.' : '开放的子任务折进父卡片的进度条，不重复占卡。' }}
+        {{ syncLabel }} ·
+        {{
+          en
+            ? "Open sub-issues fold into their parent card's meter."
+            : '开放的子任务折进父卡片的进度条，不重复占卡。'
+        }}
       </p>
     </template>
   </div>
@@ -229,11 +279,10 @@ onMounted(() => void load())
 /* Warm-copper AELS palette shipped as defaults (see the component doc).
    Light = warm paper; an ancestor `.dark` flips to the amber-CRT set. */
 .issue-board {
-  --ib-font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  --ib-font-mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo,
-    Consolas, monospace;
+  --ib-font-base:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Noto Sans SC', 'Microsoft YaHei', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ib-font-mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
   --ib-radius-sm: 4px;
   --ib-radius-md: 6px;
   --ib-brand-1: #33804a;
@@ -275,15 +324,25 @@ onMounted(() => void load())
   --ib-warning-soft: rgba(255, 180, 84, 0.2);
 }
 
-.board-panel, .board-notice {
+.board-panel,
+.board-notice {
   border: 1px solid var(--ib-divider);
   border-radius: var(--ib-radius-md);
   background: var(--ib-bg-elv);
   min-width: 0;
 }
-.board-notice { padding: 12px; margin-bottom: 10px; font-size: 13px; color: var(--ib-text-2); }
-.board-notice p { margin: 0 0 6px; }
-.github-link { margin-inline-start: 10px; }
+.board-notice {
+  padding: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--ib-text-2);
+}
+.board-notice p {
+  margin: 0 0 6px;
+}
+.github-link {
+  margin-inline-start: 10px;
+}
 
 .board-head {
   display: flex;
@@ -293,7 +352,11 @@ onMounted(() => void load())
   gap: 10px;
   padding: 12px 14px 10px;
 }
-.nav-caption { font-size: 11px; color: var(--ib-text-2); font-weight: 650; }
+.nav-caption {
+  font-size: 11px;
+  color: var(--ib-text-2);
+  font-weight: 650;
+}
 .scope-title {
   margin: 2px 0 0;
   padding: 0;
@@ -303,8 +366,16 @@ onMounted(() => void load())
   font-weight: 650;
   overflow-wrap: anywhere;
 }
-.head-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-.sync { font-size: 11px; color: var(--ib-text-2); }
+.head-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sync {
+  font-size: 11px;
+  color: var(--ib-text-2);
+}
 .control {
   min-height: 34px;
   max-width: 100%;
@@ -316,7 +387,10 @@ onMounted(() => void load())
   font: inherit;
   font-size: 13px;
 }
-.control:disabled { opacity: 0.65; cursor: wait; }
+.control:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
 .issue-board :is(button, a):focus-visible {
   outline: 2px solid var(--ib-brand-1);
   outline-offset: 2px;
@@ -333,8 +407,15 @@ onMounted(() => void load())
   font-size: 12px;
   color: var(--ib-text-2);
 }
-.board-results { padding: 10px; }
-.empty { margin: 0; padding: 10px; font-size: 13px; color: var(--ib-text-2); }
+.board-results {
+  padding: 10px;
+}
+.empty {
+  margin: 0;
+  padding: 10px;
+  font-size: 13px;
+  color: var(--ib-text-2);
+}
 
 .issue-grid {
   display: grid;
@@ -345,9 +426,16 @@ onMounted(() => void load())
   margin: 0;
   list-style: none;
 }
-.issue-grid > li { display: flex; flex-direction: column; min-width: 0; margin: 0; }
+.issue-grid > li {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+}
 @media (max-width: 639px) {
-  .issue-grid { grid-template-columns: minmax(0, 1fr); }
+  .issue-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .issue-card {
@@ -360,14 +448,21 @@ onMounted(() => void load())
   background: var(--ib-bg);
   padding: 11px 12px;
 }
-.issue-card:hover { border-color: var(--ib-brand-2); }
+.issue-card:hover {
+  border-color: var(--ib-brand-2);
+}
 .card-top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) fit-content(49%);
   align-items: center;
   gap: 8px;
 }
-.who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
 .avatar {
   display: block;
   width: 25px;
@@ -384,7 +479,12 @@ onMounted(() => void load())
   font-weight: 700;
   color: var(--ib-brand-1);
 }
-.byline { min-width: 0; display: grid; line-height: 1.4; overflow-wrap: anywhere; }
+.byline {
+  min-width: 0;
+  display: grid;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
 .author {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -392,7 +492,11 @@ onMounted(() => void load())
   font-size: 12px;
   font-weight: 650;
 }
-.ref { color: var(--ib-text-2); font-size: 11px; align-self: start; }
+.ref {
+  color: var(--ib-text-2);
+  font-size: 11px;
+  align-self: start;
+}
 .label {
   border-radius: 99px;
   padding: 1px 7px;
@@ -402,9 +506,19 @@ onMounted(() => void load())
   color: var(--ib-text-2);
   overflow-wrap: anywhere;
 }
-.label-bug { color: var(--ib-danger-1); background: var(--ib-danger-soft); }
-.label-help { color: var(--ib-warning-1); background: var(--ib-warning-soft); }
-.label-feat, .label-doc { color: var(--ib-brand-1); background: var(--ib-brand-soft); }
+.label-bug {
+  color: var(--ib-danger-1);
+  background: var(--ib-danger-soft);
+}
+.label-help {
+  color: var(--ib-warning-1);
+  background: var(--ib-warning-soft);
+}
+.label-feat,
+.label-doc {
+  color: var(--ib-brand-1);
+  background: var(--ib-brand-soft);
+}
 
 .issue-card .issue-title {
   margin: 8px 0 7px;
@@ -414,8 +528,14 @@ onMounted(() => void load())
   font-weight: 650;
   overflow-wrap: anywhere;
 }
-.issue-title a { color: var(--ib-text-1); text-decoration: none; }
-.issue-title a:hover { color: var(--ib-brand-1); text-decoration: underline; }
+.issue-title a {
+  color: var(--ib-text-1);
+  text-decoration: none;
+}
+.issue-title a:hover {
+  color: var(--ib-brand-1);
+  text-decoration: underline;
+}
 
 .card-foot {
   margin-top: auto;
@@ -442,9 +562,21 @@ onMounted(() => void load())
   background: var(--ib-bg-mute);
   overflow: hidden;
 }
-.meter progress::-webkit-progress-bar { background: var(--ib-bg-mute); }
-.meter progress::-webkit-progress-value { background: var(--ib-brand-1); border-radius: 5px; }
-.meter progress::-moz-progress-bar { background: var(--ib-brand-1); border-radius: 5px; }
+.meter progress::-webkit-progress-bar {
+  background: var(--ib-bg-mute);
+}
+.meter progress::-webkit-progress-value {
+  background: var(--ib-brand-1);
+  border-radius: 5px;
+}
+.meter progress::-moz-progress-bar {
+  background: var(--ib-brand-1);
+  border-radius: 5px;
+}
 
-.board-foot { margin: 9px 0 0; font-size: 12px; color: var(--ib-text-2); }
+.board-foot {
+  margin: 9px 0 0;
+  font-size: 12px;
+  color: var(--ib-text-2);
+}
 </style>

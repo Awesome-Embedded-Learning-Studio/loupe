@@ -62,12 +62,7 @@ export interface EngineExports {
   /** Run at most `maxInstructions`; returns a packed exit (kind in the low byte). */
   mf_run: (maxInstructions: bigint) => bigint
   /** Boot Cinux from wasm-heap pointers; returns 1 accepted, 0 refused. */
-  mf_boot_cinux: (
-    kernelPtr: number,
-    kernelLen: number,
-    diskPtr: number,
-    diskLen: number,
-  ) => number
+  mf_boot_cinux: (kernelPtr: number, kernelLen: number, diskPtr: number, diskLen: number) => number
   mf_write_guest: (paddr: number, src: number, len: number) => number
   mf_peek32: (paddr: number) => number
 

@@ -68,7 +68,7 @@ const selectedId = ref('')
 const engineUrl = shallowRef('')
 
 const selected = computed<LabPreset | null>(
-  () => presets.value.find(entry => entry.id === selectedId.value) ?? null,
+  () => presets.value.find((entry) => entry.id === selectedId.value) ?? null,
 )
 
 const client = shallowRef<LabEngineClient | null>(null)
@@ -84,7 +84,7 @@ const absolute = (src: string): string =>
   new URL(`${import.meta.env.BASE_URL}${src}`, window.location.origin).href
 
 const handlers: EngineClientHandlers = {
-  onFeed: feed => {
+  onFeed: (feed) => {
     icount = feed.icount
     term.value?.push(feed.text)
     if (feed.stopped !== null) {
@@ -94,11 +94,13 @@ const handlers: EngineClientHandlers = {
       status.value = `引导中 · ${(feed.icount / 1e6).toFixed(1)}M 条指令`
     }
   },
-  onProgress: progress => {
-    const which = progress.which === 'engine' ? '引擎' : progress.which === 'kernel' ? '内核' : '磁盘'
-    const percent = progress.total > 0
-      ? `${Math.floor((progress.loaded / progress.total) * 100)}%`
-      : `${(progress.loaded / 1048576).toFixed(1)} MiB`
+  onProgress: (progress) => {
+    const which =
+      progress.which === 'engine' ? '引擎' : progress.which === 'kernel' ? '内核' : '磁盘'
+    const percent =
+      progress.total > 0
+        ? `${Math.floor((progress.loaded / progress.total) * 100)}%`
+        : `${(progress.loaded / 1048576).toFixed(1)} MiB`
     status.value = `下载${which}… ${percent}`
   },
   onPaused: () => {
@@ -114,9 +116,9 @@ onMounted(async () => {
     engineUrl.value = manifest.engine.url
     presets.value = manifest.presets
     selectedId.value =
-      manifest.presets.find(entry => entry.id === props.preset)?.id
-      ?? manifest.presets[0]?.id
-      ?? ''
+      manifest.presets.find((entry) => entry.id === props.preset)?.id ??
+      manifest.presets[0]?.id ??
+      ''
     if (manifest.presets.length === 0) status.value = '清单里没有可用的镜像组合。'
   } catch (error) {
     status.value = `镜像清单加载失败:${error instanceof Error ? error.message : String(error)}`
@@ -132,8 +134,9 @@ const boot = async (): Promise<void> => {
   try {
     // A preset switch needs a fresh machine: drop any previous worker.
     client.value?.terminate()
-    const next = props.createClient?.(props.createWorker(), handlers)
-      ?? new EngineClient(props.createWorker(), handlers)
+    const next =
+      props.createClient?.(props.createWorker(), handlers) ??
+      new EngineClient(props.createWorker(), handlers)
     client.value = next
     const loaded = await next.load(absolute(engineUrl.value))
     await next.bootUrls(absolute(preset.kernel.url), absolute(preset.disk.url))
@@ -181,14 +184,20 @@ defineExpose({ boot, phase, presets, selectedId, status })
 <template>
   <div class="lab-shell" :style="{ '--lab-term-height': `${height}px` }">
     <div class="bar">
-      <select v-model="selectedId" :disabled="phase === 'loading' || phase === 'booting'" @change="onPresetChange">
+      <select
+        v-model="selectedId"
+        :disabled="phase === 'loading' || phase === 'booting'"
+        @change="onPresetChange"
+      >
         <option v-for="entry in presets" :key="entry.id" :value="entry.id">
           {{ entry.label }}{{ entry.note ? ` · ${entry.note}` : '' }}
         </option>
       </select>
       <button
         class="primary"
-        :disabled="phase === 'loading' || phase === 'booting' || phase === 'running' || selected === null"
+        :disabled="
+          phase === 'loading' || phase === 'booting' || phase === 'running' || selected === null
+        "
         @click="boot"
       >
         启动

@@ -5,8 +5,6 @@ import { ExitKind, judgeSerial, loadEngine, LoupeMachine, matchesExpectation } f
 import type { JudgeMachine } from '../src/index'
 import { DISK_PATH, ENGINE_PATH, KERNEL_PATH } from './assets'
 
-
-
 /** Scripted fake machine: typed input echoes back after a few runs. */
 function fakeMachine(script: Record<string, string>): JudgeMachine & { runs: number } {
   const machine = {

@@ -16,12 +16,7 @@ import {
   type RunStatus,
 } from './abi'
 import { BootRefusedError, SnapshotMismatchError } from './errors'
-import {
-  SNAPSHOT_ENGINE_NAME,
-  encodeSnapshot,
-  parseSnapshot,
-  snapshotMismatch,
-} from './snapshot'
+import { SNAPSHOT_ENGINE_NAME, encodeSnapshot, parseSnapshot, snapshotMismatch } from './snapshot'
 
 /** The Cinux image pair: kernel binary and ext2 root volume. */
 export interface CinuxImages {
@@ -120,12 +115,7 @@ export class LoupeMachine {
    * `upload` because a single multi-hundred-MiB copy freezes the tab;
    * pages yield to the main thread between uploads.
    */
-  bootUploaded(
-    kernelPtr: number,
-    kernelLen: number,
-    diskPtr: number,
-    diskLen: number,
-  ): void {
+  bootUploaded(kernelPtr: number, kernelLen: number, diskPtr: number, diskLen: number): void {
     this.use()
     const ok = this.engine.mf_boot_cinux(kernelPtr, kernelLen, diskPtr, diskLen)
     // Once accepted, the heap copies are dead weight.

@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchRepoIssues, GitHubError, isRateLimited, loadRepoIssues } from '../src/issue-live'
 
-
 // The network layer is stubbed with minimal Response shapes: ghFetch reads
 // only ok / status / headers / json.
 function searchResponse(items: object[], extra: Record<string, unknown> = {}) {
@@ -37,10 +36,12 @@ beforeEach(() => {
 
 describe('fetchRepoIssues', () => {
   it('queries the search endpoint scoped to the repository and normalizes', async () => {
-    fetchMock.mockResolvedValue(searchResponse([
-      rawIssue(2, { labels: ['feat', 'help wanted'] }),
-      rawIssue(1, { parent_issue_url: 'https://api.github.com/repos/acme/widget/issues/3' }),
-    ]))
+    fetchMock.mockResolvedValue(
+      searchResponse([
+        rawIssue(2, { labels: ['feat', 'help wanted'] }),
+        rawIssue(1, { parent_issue_url: 'https://api.github.com/repos/acme/widget/issues/3' }),
+      ]),
+    )
     const items = await fetchRepoIssues('acme/widget')
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -78,9 +79,9 @@ describe('fetchRepoIssues', () => {
   })
 
   it('reads the sub-issue summary the search response carries for free', async () => {
-    fetchMock.mockResolvedValue(searchResponse([
-      rawIssue(1, { sub_issues_summary: { total: 5, completed: 2 } }),
-    ]))
+    fetchMock.mockResolvedValue(
+      searchResponse([rawIssue(1, { sub_issues_summary: { total: 5, completed: 2 } })]),
+    )
     const [issue] = await fetchRepoIssues('acme/widget')
     expect(issue.childTotal).toBe(5)
     expect(issue.completedChildren).toBe(2)
@@ -138,8 +139,12 @@ describe('loadRepoIssues', () => {
     // happy-dom's Storage prototype is not in the call path of its sessionStorage
     // facade, so replace the global outright with a hostile one.
     vi.stubGlobal('sessionStorage', {
-      getItem: () => { throw new Error('storage denied') },
-      setItem: () => { throw new Error('storage denied') },
+      getItem: () => {
+        throw new Error('storage denied')
+      },
+      setItem: () => {
+        throw new Error('storage denied')
+      },
     })
     try {
       await loadRepoIssues('acme/widget')

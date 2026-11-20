@@ -54,8 +54,10 @@ export function parseSnapshot(bytes: Uint8Array): ParsedSnapshot {
   if (bytes.length < 8 || !MAGIC.every((b, i) => bytes[i] === b)) {
     throw new SnapshotFormatError('bad magic')
   }
-  const headerLen = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
-    .getUint32(4, true)
+  const headerLen = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(
+    4,
+    true,
+  )
   const bodyStart = 8 + headerLen
   if (headerLen === 0 || bodyStart > bytes.length) {
     throw new SnapshotFormatError('header length out of range')

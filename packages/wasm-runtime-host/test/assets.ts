@@ -18,10 +18,12 @@ export const ENGINE_PATH = [
   process.env.LOUPE_ENGINE_WASM,
   join(repoRoot, 'demo/public/engine.wasm'),
   join(repoRoot, '..', 'micro-forge/build-wasm/engine.wasm'),
-].filter((p): p is string => Boolean(p)).find(p => existsSync(p))
+]
+  .filter((p): p is string => Boolean(p))
+  .find((p) => existsSync(p))
 
-export const KERNEL_PATH = process.env.LOUPE_CINUX_KERNEL
-  ?? join(repoRoot, '..', 'Cinux/build/kernel/kernel.bin')
+export const KERNEL_PATH =
+  process.env.LOUPE_CINUX_KERNEL ?? join(repoRoot, '..', 'Cinux/build/kernel/kernel.bin')
 
-export const DISK_PATH = process.env.LOUPE_CINUX_DISK
-  ?? join(repoRoot, '..', 'Cinux/build/boot/ext2.img')
+export const DISK_PATH =
+  process.env.LOUPE_CINUX_DISK ?? join(repoRoot, '..', 'Cinux/build/boot/ext2.img')

@@ -24,18 +24,28 @@ export interface EngineClientPort {
 export interface EngineClientHandlers {
   /** Streamed console text and progress while a run is active. */
   onFeed?: (feed: { text: string; icount: number; retired: number; stopped: StopReport }) => void
-  onProgress?: (progress: { which: 'engine' | 'kernel' | 'disk'; loaded: number; total: number }) => void
+  onProgress?: (progress: {
+    which: 'engine' | 'kernel' | 'disk'
+    loaded: number
+    total: number
+  }) => void
   onPaused?: (icount: number) => void
 }
 
 export class EngineClient {
   private nextId = 1
-  private readonly pending = new Map<number, { resolve: (event: EngineEvent) => void; reject: (error: Error) => void }>()
+  private readonly pending = new Map<
+    number,
+    { resolve: (event: EngineEvent) => void; reject: (error: Error) => void }
+  >()
   private readonly port: EngineClientPort
 
-  constructor(port: EngineClientPort, private readonly handlers: EngineClientHandlers = {}) {
+  constructor(
+    port: EngineClientPort,
+    private readonly handlers: EngineClientHandlers = {},
+  ) {
     this.port = port
-    port.addEventListener('message', event => {
+    port.addEventListener('message', (event) => {
       this.receive(event.data as EngineEvent)
     })
   }
@@ -120,7 +130,7 @@ export class EngineClient {
     const request = { id, type: kind, ...fields } as EngineRequest
     const promise = new Promise<RepliedRequest[K]>((resolve, reject) => {
       this.pending.set(id, {
-        resolve: event => resolve(event as RepliedRequest[K]),
+        resolve: (event) => resolve(event as RepliedRequest[K]),
         reject,
       })
     })

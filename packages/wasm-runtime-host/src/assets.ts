@@ -66,8 +66,8 @@ export class OpfsCacheBackend implements CacheBackend {
 
   private directory(): Promise<FileSystemDirectoryHandle> {
     this.root ??= new Promise((resolve, reject) => {
-      const source = this.storage
-        ?? (navigator as unknown as { storage?: NavigatorStorage }).storage
+      const source =
+        this.storage ?? (navigator as unknown as { storage?: NavigatorStorage }).storage
       if (source === undefined) {
         reject(new Error('OPFS is unavailable in this environment.'))
         return
@@ -94,12 +94,14 @@ export class OpfsCacheBackend implements CacheBackend {
 
   async write(key: string, bytes: Uint8Array, meta: AssetMeta): Promise<void> {
     const dir = await this.directory()
-    const metaWritable = await dir.getFileHandle(`${key}.meta`, { create: true })
-      .then(handle => handle.createWritable())
+    const metaWritable = await dir
+      .getFileHandle(`${key}.meta`, { create: true })
+      .then((handle) => handle.createWritable())
     await metaWritable.write(new TextEncoder().encode(JSON.stringify(meta)))
     await metaWritable.close()
-    const dataWritable = await dir.getFileHandle(key, { create: true })
-      .then(handle => handle.createWritable())
+    const dataWritable = await dir
+      .getFileHandle(key, { create: true })
+      .then((handle) => handle.createWritable())
     await dataWritable.write(bytes as unknown as FileSystemWriteChunkType)
     await dataWritable.close()
   }

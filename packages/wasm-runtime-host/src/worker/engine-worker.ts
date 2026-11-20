@@ -15,12 +15,7 @@ import { LoupeMachine } from '../machine'
 import { loadAsset, type CacheBackend } from '../assets'
 import { judgeSerial } from '../judge'
 import { parseSnapshot } from '../snapshot'
-import type {
-  EngineEvent,
-  EngineRequest,
-  RepliedRequest,
-  RequestKind,
-} from './protocol'
+import type { EngineEvent, EngineRequest, RepliedRequest, RequestKind } from './protocol'
 
 /** Scheduler for the gaps between run turns; injectable for tests. */
 export type TurnScheduler = (run: () => void) => void
@@ -117,7 +112,7 @@ export class EngineWorkerLogic {
         const machine = this.requireMachine()
         try {
           const result = await judgeSerial(machine, request.steps, {
-            onText: text =>
+            onText: (text) =>
               this.emit({ type: 'feed', text, icount: machine.icount, retired: 0, stopped: null }),
           })
           // Judging consumed the console with its own watermark; push this
@@ -257,7 +252,7 @@ export class EngineWorkerLogic {
   }
 
   private schedule(run: () => void): void {
-    const scheduler = this.options.schedule ?? (fn => setTimeout(fn, 0))
+    const scheduler = this.options.schedule ?? ((fn) => setTimeout(fn, 0))
     scheduler(run)
   }
 
@@ -283,11 +278,8 @@ interface WorkerPort {
  * effect by the worker entry module; tests import the class directly
  * instead.
  */
-export function bindEngineWorker(
-  logic: EngineWorkerLogic,
-  port: WorkerPort,
-): void {
-  port.addEventListener('message', event => {
+export function bindEngineWorker(logic: EngineWorkerLogic, port: WorkerPort): void {
+  port.addEventListener('message', (event) => {
     void logic.handle(event.data as EngineRequest)
   })
 }

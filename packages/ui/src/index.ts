@@ -10,11 +10,6 @@ export { default as TermConsole } from './TermConsole.vue'
 export { default as LabShell } from './LabShell.vue'
 export type { LabAsset, LabEngineClient, LabManifest, LabPreset } from './LabShell.vue'
 export { default as IssueBoard } from './IssueBoard.vue'
-export {
-  fetchRepoIssues,
-  GitHubError,
-  isRateLimited,
-  loadRepoIssues,
-} from './issue-live'
+export { fetchRepoIssues, GitHubError, isRateLimited, loadRepoIssues } from './issue-live'
 export type { IssueRecord, IssuesPayload } from './issue-live'
 export { keyToBytes } from './keys'

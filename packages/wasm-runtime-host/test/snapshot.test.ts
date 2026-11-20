@@ -37,15 +37,29 @@ describe('snapshot container (pure logic)', () => {
   })
 
   it('reports the first failing field of the version triple', () => {
-    expect(snapshotMismatch(header, { engine: SNAPSHOT_ENGINE_NAME, engineVersion: '1.2.3', snapshotFormat: 7 })).toBeNull()
+    expect(
+      snapshotMismatch(header, {
+        engine: SNAPSHOT_ENGINE_NAME,
+        engineVersion: '1.2.3',
+        snapshotFormat: 7,
+      }),
+    ).toBeNull()
     expect(
       snapshotMismatch(header, { engine: 'other', engineVersion: '1.2.3', snapshotFormat: 7 }),
     ).toContain('vs other')
     expect(
-      snapshotMismatch(header, { engine: SNAPSHOT_ENGINE_NAME, engineVersion: '9.9.9', snapshotFormat: 7 }),
+      snapshotMismatch(header, {
+        engine: SNAPSHOT_ENGINE_NAME,
+        engineVersion: '9.9.9',
+        snapshotFormat: 7,
+      }),
     ).toContain('engineVersion')
     expect(
-      snapshotMismatch(header, { engine: SNAPSHOT_ENGINE_NAME, engineVersion: '1.2.3', snapshotFormat: 8 }),
+      snapshotMismatch(header, {
+        engine: SNAPSHOT_ENGINE_NAME,
+        engineVersion: '1.2.3',
+        snapshotFormat: 8,
+      }),
     ).toContain('snapshotFormat')
   })
 })

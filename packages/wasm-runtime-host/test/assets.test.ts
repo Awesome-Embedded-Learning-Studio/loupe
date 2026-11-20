@@ -1,15 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import {
-  cacheKey,
-  loadAsset,
-  MemoryCacheBackend,
-  type AssetMeta,
-} from '../src/assets'
+import { cacheKey, loadAsset, MemoryCacheBackend, type AssetMeta } from '../src/assets'
 import { fetchWithProgress } from '../src/http'
 
 function streamResponse(chunks: number[], length: string): Response {
   const encoder = new TextEncoder()
-  const queue = chunks.map(n => encoder.encode(String(n)))
+  const queue = chunks.map((n) => encoder.encode(String(n)))
   let done = false
   const body = {
     getReader: () => ({
@@ -38,7 +33,12 @@ describe('fetchWithProgress', () => {
       onProgress: (loaded, total) => seen.push([loaded, total]),
     })
     expect(new TextDecoder().decode(fetched.buffer)).toBe('1234')
-    expect(seen).toEqual([[1, 4], [2, 4], [3, 4], [4, 4]])
+    expect(seen).toEqual([
+      [1, 4],
+      [2, 4],
+      [3, 4],
+      [4, 4],
+    ])
   })
 
   it('rejects on a non-2xx status', async () => {

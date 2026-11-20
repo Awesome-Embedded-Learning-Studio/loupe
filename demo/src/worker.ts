@@ -7,7 +7,7 @@ import { EngineWorkerLogic, bindEngineWorker } from '@aels/wasm-runtime-host/wor
 import { OpfsCacheBackend } from '@aels/wasm-runtime-host'
 
 const logic = new EngineWorkerLogic(
-  event => {
+  (event) => {
     self.postMessage(event)
   },
   { backend: new OpfsCacheBackend() },

@@ -3,14 +3,28 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "loupe:把 micro-forge 编出的 wasm 引擎伺候到浏览器里的网页壳仓。",
+  "description": "面向教程站的 Vue 组件与 wasm 运行时宿主：在浏览器里跑 micro-forge 引擎的嵌入式实验。",
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
     "dev": "pnpm --filter @aels/loupe-demo dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "build": "pnpm -r build"
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "typescript-eslint": "^8.73.0"
   }
 }

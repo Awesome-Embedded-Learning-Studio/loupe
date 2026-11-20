@@ -9,7 +9,10 @@ import type { IssueRecord } from '../src/issue-live'
 const loadRepoIssues = vi.fn()
 vi.mock('../src/issue-live', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../src/issue-live')>()
-  return { ...actual, loadRepoIssues: (...args: Parameters<typeof actual.loadRepoIssues>) => loadRepoIssues(...args) }
+  return {
+    ...actual,
+    loadRepoIssues: (...args: Parameters<typeof actual.loadRepoIssues>) => loadRepoIssues(...args),
+  }
 })
 
 function record(over: Partial<IssueRecord> & Pick<IssueRecord, 'number'>): IssueRecord {
@@ -92,7 +95,12 @@ describe('IssueBoard', () => {
   })
 
   it('shows the empty state for a repository without open issues', async () => {
-    loadRepoIssues.mockResolvedValue({ repo: 'acme/widget', items: [], at: Date.now(), cached: false })
+    loadRepoIssues.mockResolvedValue({
+      repo: 'acme/widget',
+      items: [],
+      at: Date.now(),
+      cached: false,
+    })
     const wrapper = await mountBoard({ repo: 'acme/widget' })
     expect(wrapper.find('.empty').text()).toContain('没有开放的 Issue')
     wrapper.unmount()

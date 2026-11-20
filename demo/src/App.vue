@@ -25,7 +25,7 @@ let icount = 0
 let paused = false
 
 const handlers: EngineClientHandlers = {
-  onFeed: feed => {
+  onFeed: (feed) => {
     icount = feed.icount
     term.value?.push(feed.text)
     if (feed.stopped !== null) {
@@ -35,10 +35,11 @@ const handlers: EngineClientHandlers = {
       status.value = `运行中 · ${(feed.icount / 1e6).toFixed(1)}M 条指令`
     }
   },
-  onProgress: progress => {
-    const percent = progress.total > 0
-      ? `${Math.floor((progress.loaded / progress.total) * 100)}%`
-      : `${(progress.loaded / 1048576).toFixed(1)} MiB`
+  onProgress: (progress) => {
+    const percent =
+      progress.total > 0
+        ? `${Math.floor((progress.loaded / progress.total) * 100)}%`
+        : `${(progress.loaded / 1048576).toFixed(1)} MiB`
     status.value = `下载 ${labelOf(progress.which)}… ${percent}`
   },
   onPaused: () => {
@@ -54,8 +55,7 @@ function labelOf(which: 'engine' | 'kernel' | 'disk'): string {
   return '磁盘'
 }
 
-const engineReady = () =>
-  source.value === 'url' || Boolean(kernelFile.value && diskFile.value)
+const engineReady = () => source.value === 'url' || Boolean(kernelFile.value && diskFile.value)
 
 const readFileBytes = (file: File): Promise<Uint8Array> =>
   new Promise((resolve, reject) => {
@@ -166,36 +166,20 @@ onBeforeUnmount(() => {
 <template>
   <header>
     <h1>loupe · demo</h1>
-    <label class="mode"
-      ><input v-model="source" type="radio" value="files" /> 本地文件</label
-    >
-    <label class="mode"
-      ><input v-model="source" type="radio" value="url" /> URL(缓存)</label
-    >
+    <label class="mode"><input v-model="source" type="radio" value="files" /> 本地文件</label>
+    <label class="mode"><input v-model="source" type="radio" value="url" /> URL(缓存)</label>
     <template v-if="source === 'files'">
-      <label class="file"
-        >kernel.bin<input type="file" @change="pickKernel"
-      /></label>
-      <label class="file"
-        >ext2.img<input type="file" @change="pickDisk"
-      /></label>
+      <label class="file">kernel.bin<input type="file" @change="pickKernel" /></label>
+      <label class="file">ext2.img<input type="file" @change="pickDisk" /></label>
     </template>
     <template v-else>
-      <label class="url"
-        >kernel<input v-model="kernelUrl" type="text" spellcheck="false"
-      /></label>
-      <label class="url"
-        >disk<input v-model="diskUrl" type="text" spellcheck="false"
-      /></label>
+      <label class="url">kernel<input v-model="kernelUrl" type="text" spellcheck="false" /></label>
+      <label class="url">disk<input v-model="diskUrl" type="text" spellcheck="false" /></label>
     </template>
-    <button :disabled="!engineReady() || running || busy" @click="boot">
-      引导
-    </button>
+    <button :disabled="!engineReady() || running || busy" @click="boot">引导</button>
     <button :disabled="!running" @click="pause">暂停</button>
     <button :disabled="running || busy || paused" @click="resume">继续</button>
-    <button :disabled="running || busy || !paused" @click="runJudgeDemo">
-      判题演示
-    </button>
+    <button :disabled="running || busy || !paused" @click="runJudgeDemo">判题演示</button>
     <span id="status">{{ status }}</span>
     <span v-if="judgeVerdict !== ''" id="verdict">{{ judgeVerdict }}</span>
   </header>

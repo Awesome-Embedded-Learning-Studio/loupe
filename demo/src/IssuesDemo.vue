@@ -21,7 +21,13 @@ function apply(): void {
       <h1>loupe · Issue 看板</h1>
       <label class="repo-edit">
         仓库
-        <input v-model="draft" type="text" spellcheck="false" placeholder="owner/name" @keyup.enter="apply" />
+        <input
+          v-model="draft"
+          type="text"
+          spellcheck="false"
+          placeholder="owner/name"
+          @keyup.enter="apply"
+        />
       </label>
       <button type="button" @click="apply">切换</button>
       <button type="button" @click="dark = !dark">{{ dark ? '浅色' : '深色' }}</button>
@@ -39,7 +45,9 @@ function apply(): void {
   background: #f0ede4;
   transition: background 160ms;
 }
-.page.dark { background: #0d0b07; }
+.page.dark {
+  background: #0d0b07;
+}
 
 .bar {
   display: flex;
@@ -52,11 +60,23 @@ function apply(): void {
   font-size: 13px;
   color: #2b2620;
 }
-.page.dark .bar { color: #d8cfba; border-bottom-color: rgba(120, 100, 60, 0.35); }
+.page.dark .bar {
+  color: #d8cfba;
+  border-bottom-color: rgba(120, 100, 60, 0.35);
+}
 
-h1 { font-size: 18px; margin: 0; font-weight: 650; }
+h1 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 650;
+}
 
-.repo-edit { display: inline-flex; align-items: center; gap: 6px; color: inherit; }
+.repo-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+}
 .repo-edit input {
   width: 260px;
   padding: 5px 9px;
@@ -67,7 +87,10 @@ h1 { font-size: 18px; margin: 0; font-weight: 650; }
   background: #fffdf4;
   color: inherit;
 }
-.page.dark .repo-edit input { border-color: #332b1e; background: #1e1913; }
+.page.dark .repo-edit input {
+  border-color: #332b1e;
+  background: #1e1913;
+}
 
 .bar button {
   padding: 5px 10px;
@@ -78,8 +101,16 @@ h1 { font-size: 18px; margin: 0; font-weight: 650; }
   border-radius: 4px;
   background: transparent;
 }
-.page.dark .bar button { border-color: #332b1e; }
-.bar a { color: inherit; }
+.page.dark .bar button {
+  border-color: #332b1e;
+}
+.bar a {
+  color: inherit;
+}
 
-.content { max-width: 1152px; margin: 0 auto; padding: 6px 18px 36px; }
+.content {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 6px 18px 36px;
+}
 </style>

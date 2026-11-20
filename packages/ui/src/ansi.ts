@@ -40,8 +40,14 @@ export const resetStyle = (): TermStyle => ({
 const sameStyle = (a: TermStyle | null, b: TermStyle | null): boolean => {
   if (a === b) return true
   if (a === null || b === null) return false
-  return a.fg === b.fg && a.bg === b.bg && a.bold === b.bold && a.faint === b.faint
-    && a.italic === b.italic && a.underline === b.underline
+  return (
+    a.fg === b.fg &&
+    a.bg === b.bg &&
+    a.bold === b.bold &&
+    a.faint === b.faint &&
+    a.italic === b.italic &&
+    a.underline === b.underline
+  )
 }
 
 /** xterm 256-palette index to a CSS color (16 base colors stay palette keys). */
@@ -148,16 +154,37 @@ export class AnsiStreamParser {
     for (let k = 0; k < params.length; k++) {
       const p = Number.isNaN(params[k]) ? 0 : params[k]
       switch (p) {
-        case 0: this.style = resetStyle(); break
-        case 1: this.style.bold = true; break
-        case 2: this.style.faint = true; break
-        case 3: this.style.italic = true; break
-        case 4: this.style.underline = true; break
-        case 22: this.style.bold = false; this.style.faint = false; break
-        case 23: this.style.italic = false; break
-        case 24: this.style.underline = false; break
-        case 39: this.style.fg = null; break
-        case 49: this.style.bg = null; break
+        case 0:
+          this.style = resetStyle()
+          break
+        case 1:
+          this.style.bold = true
+          break
+        case 2:
+          this.style.faint = true
+          break
+        case 3:
+          this.style.italic = true
+          break
+        case 4:
+          this.style.underline = true
+          break
+        case 22:
+          this.style.bold = false
+          this.style.faint = false
+          break
+        case 23:
+          this.style.italic = false
+          break
+        case 24:
+          this.style.underline = false
+          break
+        case 39:
+          this.style.fg = null
+          break
+        case 49:
+          this.style.bg = null
+          break
         default:
           if (p >= 30 && p <= 37) this.style.fg = `p${p - 30}`
           else if (p >= 90 && p <= 97) this.style.fg = `p${p - 90 + 8}`
