@@ -1,7 +1,14 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["vite/client", "node"]
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@aels/wasm-runtime-host": ["../packages/wasm-runtime-host/src/index.ts"],
+      "@aels/wasm-runtime-host/worker": [
+        "../packages/wasm-runtime-host/src/worker/engine-worker.ts"
+      ],
+      "@aels/loupe-ui": ["../packages/ui/src/index.ts"]
+    }
   },
   "include": ["src", "vite.config.ts"]
 }

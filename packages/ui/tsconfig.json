@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@aels/wasm-runtime-host": ["../wasm-runtime-host/src/index.ts"],
+      "@aels/wasm-runtime-host/worker": ["../wasm-runtime-host/src/worker/engine-worker.ts"]
+    }
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "vite.config.ts"]
 }

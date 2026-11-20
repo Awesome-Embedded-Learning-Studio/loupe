@@ -3,17 +3,33 @@
   "version": "0.1.0",
   "type": "module",
   "description": "TypeScript wrapper for the micro-forge wasm engine: loading with ABI checks, machine lifetime, run-loop stepping, and the serial console stream.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./worker": "./src/worker/engine-worker.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./worker": {
+      "types": "./dist/worker/engine-worker.d.ts",
+      "default": "./dist/worker.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "build": "vite build --config vite.build.config.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "typescript": "^5.6.0",
+    "vite": "^6.4.6",
+    "vite-plugin-dts": "^5.1.2",
     "vitest": "^2.1.0"
   }
 }
