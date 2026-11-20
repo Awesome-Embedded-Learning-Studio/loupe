@@ -2,6 +2,8 @@
 
 本地试玩页。引擎跑在 dedicated worker 里(`src/worker.ts` 入口,`EngineClient` 通信),页面只管展示;URL 模式的镜像与引擎走 worker 内的 OPFS 缓存,二次引导不再下载。
 
+另一个页面 `issues.html` 是 `IssueBoard` 的演示:输入任意 `owner/name` 即可把看板指向别的仓库,顶栏可切换明暗配色(组件自带暖纸与琥珀 CRT 两套默认 token)。
+
 ## 资产
 
 demo 的 `public/` 不进 git,同时也是三件套的集散地:要往别处部署(如 Cinux 文档站的 `document/public/cinux-lab/`,或 Cinux-Book 的 `site/.vitepress/public/cinux-lab/`)时,直接从这里拷。刷新方式:
