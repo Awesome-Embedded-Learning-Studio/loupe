@@ -3,6 +3,27 @@
   "version": "0.1.0",
   "type": "module",
   "description": "TypeScript wrapper for the micro-forge wasm engine: loading with ABI checks, machine lifetime, run-loop stepping, and the serial console stream.",
+  "license": "MIT",
+  "author": "Awesome-Embedded-Learning-Studio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Awesome-Embedded-Learning-Studio/loupe.git",
+    "directory": "packages/wasm-runtime-host"
+  },
+  "bugs": "https://github.com/Awesome-Embedded-Learning-Studio/loupe/issues",
+  "homepage": "https://github.com/Awesome-Embedded-Learning-Studio/loupe#readme",
+  "keywords": [
+    "wasm",
+    "webassembly",
+    "worker",
+    "emulator",
+    "virtual-machine",
+    "typescript",
+    "opfs"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

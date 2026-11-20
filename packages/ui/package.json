@@ -3,6 +3,29 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Vue component layer for loupe: terminal and machine controls, embeddable in VitePress.",
+  "license": "MIT",
+  "author": "Awesome-Embedded-Learning-Studio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Awesome-Embedded-Learning-Studio/loupe.git",
+    "directory": "packages/ui"
+  },
+  "bugs": "https://github.com/Awesome-Embedded-Learning-Studio/loupe/issues",
+  "homepage": "https://github.com/Awesome-Embedded-Learning-Studio/loupe#readme",
+  "keywords": [
+    "vue",
+    "vue3",
+    "vue-component",
+    "wasm",
+    "webassembly",
+    "terminal",
+    "emulator",
+    "vitepress",
+    "issue-board"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
