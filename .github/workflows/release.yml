@@ -1,0 +1,38 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  release:
+    # Skips forks so a stray NPM_TOKEN never publishes from a copy.
+    if: github.repository == 'Awesome-Embedded-Learning-Studio/loupe'
+    permissions:
+      contents: write # version commits and releases (changesets/action)
+      id-token: write # OIDC token required for npm provenance
+      pull-requests: write # version pull requests (changesets/action)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so changesets can attribute changelog entries.
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Create release pull request or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
